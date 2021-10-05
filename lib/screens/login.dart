@@ -1,7 +1,9 @@
+//import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
 import 'myhome.dart';
 import 'signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = '/log';
@@ -10,6 +12,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  late String _email, _password;
+  final auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -51,8 +55,10 @@ class _LoginPageState extends State<LoginPage> {
                             height * 0.06, width * 0.02, height * 0.01),
                         child: TextField(
                           decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Username'),
+                              border: OutlineInputBorder(), hintText: 'email'),
+                          onChanged: (value) {
+                            _email = value.trim();
+                          },
                         ),
                       ),
                       Container(
@@ -63,6 +69,9 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'password'),
+                          onChanged: (value) {
+                            _password = value.trim();
+                          },
                         ),
                       ),
                       Container(
@@ -84,8 +93,15 @@ class _LoginPageState extends State<LoginPage> {
                               0, height * 0.06, 0, height * 0.01),
                           child: ElevatedButton(
                               child: Text('Log in'),
-                              onPressed: () {
-                                Navigator.pushNamed(context, HomePage.id);
+                              onPressed: () async {
+                                try {
+                                  await auth.signInWithEmailAndPassword(
+                                      email: _email, password: _password);
+                                  Navigator.pushNamed(context, HomePage.id);
+                                  // ignore: unused_catch_clause
+                                } on FirebaseAuthException catch (e) {
+                                  Navigator.pushNamed(context, LoginPage.id);
+                                }
                               }))
                     ],
                   )),

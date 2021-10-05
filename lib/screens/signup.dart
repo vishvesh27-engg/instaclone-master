@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
 import 'login.dart';
 import 'myhome.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpPage extends StatefulWidget {
   static const String id = '/sign';
@@ -10,6 +11,8 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  late String _email, _password, _confirm;
+  final auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -59,6 +62,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), hintText: 'Email Id'),
+                    onChanged: (value) {
+                      _email = value.trim();
+                    },
                   ),
                 ),
                 Container(
@@ -68,6 +74,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), hintText: 'password'),
+                    onChanged: (value) {
+                      _confirm = value.trim();
+                    },
                   ),
                 ),
                 Container(
@@ -78,6 +87,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'confirm password'),
+                    onChanged: (value) {
+                      _password = value.trim();
+                    },
                   ),
                 ),
                 Container(
@@ -87,7 +99,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: ElevatedButton(
                         child: Text('Sign Up'),
                         onPressed: () {
-                          Navigator.pushNamed(context, HomePage.id);
+                          if (_password == _confirm) {
+                            auth.createUserWithEmailAndPassword(
+                                email: _email, password: _password);
+                            Navigator.pushNamed(context, HomePage.id);
+                          } else {
+                            Navigator.pushNamed(context, SignUpPage.id);
+                          }
                         }))
               ])),
           Positioned(
