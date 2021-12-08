@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/scrollpage.dart';
 import 'package:instaclone/screens/searchpage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'profilepage.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +12,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedPage = 0;
+  String _url = '';
+  @override
+  void initState() {
+    getprofilephoto();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  getprofilephoto() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    _url = sharedPreferences.getString('profile_pic')!;
+  }
 
   final _pageOptions = [
     ScrollPage(),
@@ -36,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                     height / 400, height / 168, height / 400, height / 168),
                 child: CircleAvatar(
                   radius: height * 0.015,
-                  backgroundImage: AssetImage("assets/storyimage1.jpg"),
+                  backgroundImage: AssetImage(_url),
                 ),
               ),
               label: 'search',

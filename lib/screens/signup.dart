@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'myhome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,8 +13,10 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  late String _email, _password, _confirm;
+  late String _email, _password, _confirm, _username;
   final auth = FirebaseAuth.instance;
+  final store = FirebaseFirestore.instance.collection('users');
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -53,6 +57,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: TextField(
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), hintText: 'Username'),
+                    onChanged: (value) {
+                      _username = value.trim();
+                    },
                   ),
                 ),
                 Container(
@@ -100,9 +107,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Text('Sign Up'),
                         onPressed: () {
                           if (_password == _confirm) {
-                            auth.createUserWithEmailAndPassword(
-                                email: _email, password: _password);
-                            Navigator.pushNamed(context, HomePage.id);
+                            handlesignup();
                           } else {
                             Navigator.pushNamed(context, SignUpPage.id);
                           }
@@ -152,5 +157,29 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: TextStyle(color: Colors.grey)))
               ]))
         ])));
+  }
+
+  handlesignup() async {
+    await auth.createUserWithEmailAndPassword(
+        email: _email, password: _password);
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final User = (await auth.signInWithEmailAndPassword(
+            email: _email, password: _password))
+        .user;
+    if (User != null) {
+      FirebaseFirestore.instance.collection('users').doc(User.uid).set({
+        "id": User.uid,
+        "name": _username,
+        "email": _email,
+        "profile_pic": '',
+        "created_at": DateTime.now().millisecondsSinceEpoch,
+      });
+      sharedPreferences.setString("id", User.uid);
+      sharedPreferences.setString("name", _username);
+      sharedPreferences.setString("email", _email);
+      sharedPreferences.setString("profile_pic", 'assets/default.jpg');
+
+      Navigator.pushNamed(context, HomePage.id);
+    }
   }
 }

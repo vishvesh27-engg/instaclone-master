@@ -1,6 +1,8 @@
 //import 'dart:html';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'myhome.dart';
 import 'signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -94,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: ElevatedButton(
                               child: Text('Log in'),
                               onPressed: () async {
+                                handlelogin();
                                 try {
                                   await auth.signInWithEmailAndPassword(
                                       email: _email, password: _password);
@@ -152,5 +155,31 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ));
+  }
+
+  handlelogin() async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      final firebaseuser = (await auth.signInWithEmailAndPassword(
+              email: _email, password: _password))
+          .user;
+      if (firebaseuser != null) {
+        final result = (await FirebaseFirestore.instance
+                .collection('users')
+                .where('id', isEqualTo: firebaseuser.uid)
+                .get())
+            .docs;
+        sharedPreferences.setString("id", result[0]["id"]);
+        sharedPreferences.setString("name", result[0]["name"]);
+        sharedPreferences.setString("email", result[0]["email"]);
+        sharedPreferences.setString("profile_pic", result[0]["profile_pic"]);
+        Navigator.pushNamed(context, HomePage.id);
+      }
+
+      // ignore: unused_catch_clause
+    } on FirebaseAuthException catch (e) {
+      Navigator.pushNamed(context, LoginPage.id);
+    }
   }
 }
