@@ -171,7 +171,7 @@ class _SignUpPageState extends State<SignUpPage> {
         "id": User.uid,
         "name": _username,
         "email": _email,
-        "profile_pic": '',
+        "profile_pic": 'assets/default.jpg',
         "created_at": DateTime.now().millisecondsSinceEpoch,
       });
       sharedPreferences.setString("id", User.uid);
