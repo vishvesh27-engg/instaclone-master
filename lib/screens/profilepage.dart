@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:instaclone/screens/editprofile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String id = '/profile';
@@ -7,6 +9,28 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String _username = "", _email = "", _profilepic = "", _name = "", _bio = "";
+  int _followers = -1, _following = -1, _posts = -1;
+  @override
+  void initState() {
+    super.initState();
+    getuserinfo();
+    // TODO: implement initState
+  }
+
+  getuserinfo() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    _username = sharedPreferences.getString('username')!;
+    _name = sharedPreferences.getString('name')!;
+    _bio = sharedPreferences.getString('bio')!;
+    _email = sharedPreferences.getString('email')!;
+    _profilepic = sharedPreferences.getString('profile_pic')!;
+    _followers = sharedPreferences.getInt('followers')!;
+    _following = sharedPreferences.getInt('following')!;
+    _posts = sharedPreferences.getInt('posts')!;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -18,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
           leadingWidth: 0,
           title: Row(children: [
             Text(
-              "Soul_21",
+              _username,
               style: TextStyle(color: Colors.black),
             ),
             Icon(
@@ -47,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: EdgeInsets.fromLTRB(
                             height / 20, height / 14, height / 20, 0),
                         child: Text(
-                          "54",
+                          "$_posts",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -69,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: EdgeInsets.fromLTRB(
                             height / 30, height / 14, height / 30, 0),
                         child: Text(
-                          "834",
+                          "$_followers",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -91,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: EdgeInsets.fromLTRB(
                             height / 20, height / 14, height / 20, 0),
                         child: Text(
-                          "162",
+                          "$_following",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -113,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(height / 80, 0, 0, 0),
                     child: Text(
-                      "Jacob West",
+                      _name,
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -124,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(height / 80, 0, 0, 0),
                     child: Text(
-                      "whatever let's you sleep at night",
+                      _bio,
                       style: TextStyle(color: Colors.black, fontSize: 20),
                     ))),
             Container(
@@ -132,7 +156,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: width * 0.9,
                 padding: EdgeInsets.fromLTRB(0, height * 0.05, 0, 0),
                 child: ElevatedButton(
-                    onPressed: () {}, child: Text('Edit Profile'))),
+                    onPressed: () {
+                      Navigator.pushNamed(context, Editprofile.id);
+                    },
+                    child: Text('Edit Profile'))),
             Container(
                 padding: EdgeInsets.fromLTRB(
                     height / 300, height / 20, height / 300, 0),

@@ -171,9 +171,14 @@ class _LoginPageState extends State<LoginPage> {
                 .get())
             .docs;
         sharedPreferences.setString("id", result[0]["id"]);
+        sharedPreferences.setString("username", result[0]["username"]);
         sharedPreferences.setString("name", result[0]["name"]);
+        sharedPreferences.setString("bio", result[0]["bio"]);
         sharedPreferences.setString("email", result[0]["email"]);
         sharedPreferences.setString("profile_pic", result[0]["profile_pic"]);
+        sharedPreferences.setInt("followers", result[0]["followers"]);
+        sharedPreferences.setInt("following", result[0]["following"]);
+        sharedPreferences.setInt("posts", result[0]["posts"]);
         Navigator.pushNamed(context, HomePage.id);
       }
 

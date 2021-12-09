@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/dmpage.dart';
+import 'package:instaclone/screens/editprofile.dart';
 import 'package:instaclone/screens/homepage.dart';
 import 'package:instaclone/screens/profilepage.dart';
 import 'screens/myhome.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
                 SearchPage.id: (context) => SearchPage(),
                 HomePage.id: (context) => HomePage(),
                 ProfilePage.id: (context) => ProfilePage(),
-                DmPage.id: (context) => DmPage()
+                DmPage.id: (context) => DmPage(),
+                Editprofile.id: (context) => Editprofile()
               },
             );
           } else {

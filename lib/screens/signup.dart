@@ -169,15 +169,23 @@ class _SignUpPageState extends State<SignUpPage> {
     if (User != null) {
       FirebaseFirestore.instance.collection('users').doc(User.uid).set({
         "id": User.uid,
-        "name": _username,
+        "username": _username,
         "email": _email,
         "profile_pic": 'assets/default.jpg',
         "created_at": DateTime.now().millisecondsSinceEpoch,
+        "followers": 0,
+        "following": 0,
+        "posts": 0,
       });
       sharedPreferences.setString("id", User.uid);
-      sharedPreferences.setString("name", _username);
+      sharedPreferences.setString("username", _username);
+      sharedPreferences.setString("name", "test");
+      sharedPreferences.setString("bio", "test");
       sharedPreferences.setString("email", _email);
       sharedPreferences.setString("profile_pic", 'assets/default.jpg');
+      sharedPreferences.setInt("followers", 0);
+      sharedPreferences.setInt("following", 0);
+      sharedPreferences.setInt("posts", 0);
 
       Navigator.pushNamed(context, HomePage.id);
     }
