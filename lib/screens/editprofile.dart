@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:instaclone/screens/profilepage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as Path;
 
 class Editprofile extends StatefulWidget {
   const Editprofile({Key? key}) : super(key: key);
@@ -10,12 +17,13 @@ class Editprofile extends StatefulWidget {
 }
 
 class _EditprofileState extends State<Editprofile> {
+  File? image;
   var email_controller = TextEditingController(),
       name_controller = TextEditingController(),
       username_controller = TextEditingController(),
       bio_controller = TextEditingController();
-  String _username = "", _email = "", _profilepic = "", _name = "", _bio = "";
-  int _followers = -1, _following = -1, _posts = -1;
+  String _username = "", _email = "", _name = "", _bio = "";
+  String? _profilepic;
   @override
   void initState() {
     getuserinfo();
@@ -34,9 +42,8 @@ class _EditprofileState extends State<Editprofile> {
     email_controller =
         TextEditingController(text: sharedPreferences.getString('email'));
     _profilepic = sharedPreferences.getString('profile_pic')!;
-    _followers = sharedPreferences.getInt('followers')!;
-    _following = sharedPreferences.getInt('following')!;
-    _posts = sharedPreferences.getInt('posts')!;
+
+    image = File(_profilepic!);
     setState(() {});
   }
 
@@ -50,7 +57,14 @@ class _EditprofileState extends State<Editprofile> {
             Navigator.pushNamed(context, ProfilePage.id);
           }),
           title: Text('Edit Profile'),
-          actions: [IconButton(onPressed: saveinfo(), icon: Icon(Icons.save))],
+          actions: [
+            IconButton(
+                onPressed: () {
+                  saveinfo();
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.save))
+          ],
         ),
         body: Column(children: [
           Container(
@@ -62,7 +76,9 @@ class _EditprofileState extends State<Editprofile> {
                     width: width,
                     child: CircleAvatar(
                       radius: height * 0.06,
-                      backgroundImage: AssetImage("assets/storyimage1.jpg"),
+                      backgroundImage: (_profilepic == null)
+                          ? AssetImage("assets/default.jpg")
+                          : FileImage(image!) as ImageProvider,
                     ),
                   ),
                   GestureDetector(
@@ -181,6 +197,78 @@ class _EditprofileState extends State<Editprofile> {
         ]));
   }
 
-  saveinfo() {}
-  changephoto() {}
+  saveinfo() async {
+    final sharedpreferences = await SharedPreferences.getInstance();
+    sharedpreferences.setString('profile_pic', _profilepic!);
+    sharedpreferences.setString('username', _username);
+    sharedpreferences.setString('name', _name);
+    sharedpreferences.setString('bio', _bio);
+    sharedpreferences.setString('email', _email);
+    final id = sharedpreferences.getString('id');
+    final user =
+        await FirebaseFirestore.instance.collection('users').doc(id).update({
+      'username': _username,
+      'name': _name,
+      'bio': _bio,
+      'email': _email,
+      'profile_pic': _profilepic
+    });
+  }
+
+  changephoto() {
+    var height = MediaQuery.of(context).size.height;
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => Container(
+            height: height / 8,
+            child: ListView(children: [
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: Text('camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  getimage(1);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  getimage(2);
+                },
+              ),
+            ])));
+  }
+
+  getimage(int choice) async {
+    final newimage;
+    try {
+      if (choice == 1) {
+        newimage = await ImagePicker().pickImage(source: ImageSource.camera);
+      } else {
+        newimage = await ImagePicker().pickImage(source: ImageSource.gallery);
+      }
+      if (newimage == null) {
+        return;
+      } else {
+        //final temp = File(newimage!.path);
+        final imagepermanent = await saveimagepermanently(newimage.path);
+        setState(() {
+          image = imagepermanent;
+        });
+      }
+    } on PlatformException catch (e) {
+      print('failed to pick image $e');
+    }
+  }
+
+  Future<File> saveimagepermanently(String imagepath) async {
+    final Directory = await getApplicationDocumentsDirectory();
+    final name = Path.basename(imagepath);
+    final storedimage = File('${Directory.path}/$name');
+    _profilepic = storedimage.path;
+    File(imagepath).copy(storedimage.path);
+    return File(storedimage.path);
+  }
 }

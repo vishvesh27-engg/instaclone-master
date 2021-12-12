@@ -186,7 +186,6 @@ class _SignUpPageState extends State<SignUpPage> {
       sharedPreferences.setInt("followers", 0);
       sharedPreferences.setInt("following", 0);
       sharedPreferences.setInt("posts", 0);
-
       Navigator.pushNamed(context, HomePage.id);
     }
   }
