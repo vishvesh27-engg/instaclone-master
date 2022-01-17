@@ -2,10 +2,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'myhome.dart';
 import 'signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:instaclone/services/globals.dart' as global;
 
 class LoginPage extends StatefulWidget {
   static const String id = '/log';
@@ -159,8 +159,6 @@ class _LoginPageState extends State<LoginPage> {
 
   handlelogin() async {
     try {
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
       final firebaseuser = (await auth.signInWithEmailAndPassword(
               email: _email, password: _password))
           .user;
@@ -170,20 +168,32 @@ class _LoginPageState extends State<LoginPage> {
                 .where('id', isEqualTo: firebaseuser.uid)
                 .get())
             .docs;
-        sharedPreferences.setString("id", result[0]["id"]);
-        sharedPreferences.setString("username", result[0]["username"]);
-        sharedPreferences.setString("name", result[0]["name"]);
-        sharedPreferences.setString("bio", result[0]["bio"]);
-        sharedPreferences.setString("email", result[0]["email"]);
-        sharedPreferences.setString("profile_pic", result[0]["profile_pic"]);
-        sharedPreferences.setInt("followers", result[0]["followers"]);
-        sharedPreferences.setInt("following", result[0]["following"]);
-        sharedPreferences.setInt("posts", result[0]["posts"]);
+        print("debug1");
+        global.posts = result[0]["posts"];
+        print("debug2");
+        global.id = result[0]["id"];
+        print("debug3");
+        global.username = result[0]["username"];
+        print("debug4");
+        global.profilepic = result[0]["profile_pic"];
+        print("debug5");
+        global.name = result[0]["name"];
+        print("debug6");
+        global.bio = result[0]["bio"];
+        print("debug7");
+        global.email = result[0]["email"];
+        print("debug8");
+        global.followers = result[0]["followers"];
+        print("debug9");
+        global.following = result[0]["following"];
+        print("debug10");
+
         Navigator.pushNamed(context, HomePage.id);
       }
 
       // ignore: unused_catch_clause
     } on FirebaseAuthException catch (e) {
+      print(e);
       Navigator.pushNamed(context, LoginPage.id);
     }
   }

@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instaclone/screens/profilepage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as Path;
+import 'package:instaclone/services/globals.dart' as global;
 
 class Editprofile extends StatefulWidget {
   const Editprofile({Key? key}) : super(key: key);
@@ -31,17 +31,12 @@ class _EditprofileState extends State<Editprofile> {
     super.initState();
   }
 
-  getuserinfo() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    username_controller =
-        TextEditingController(text: sharedPreferences.getString('username'));
-    name_controller =
-        TextEditingController(text: sharedPreferences.getString('name'));
-    bio_controller =
-        TextEditingController(text: sharedPreferences.getString('bio'));
-    email_controller =
-        TextEditingController(text: sharedPreferences.getString('email'));
-    _profilepic = sharedPreferences.getString('profile_pic')!;
+  getuserinfo() {
+    username_controller = TextEditingController(text: global.username);
+    name_controller = TextEditingController(text: global.name);
+    bio_controller = TextEditingController(text: global.bio);
+    email_controller = TextEditingController(text: global.email);
+    _profilepic = global.profilepic;
 
     image = File(_profilepic!);
     setState(() {});
@@ -198,13 +193,12 @@ class _EditprofileState extends State<Editprofile> {
   }
 
   saveinfo() async {
-    final sharedpreferences = await SharedPreferences.getInstance();
-    sharedpreferences.setString('profile_pic', _profilepic!);
-    sharedpreferences.setString('username', _username);
-    sharedpreferences.setString('name', _name);
-    sharedpreferences.setString('bio', _bio);
-    sharedpreferences.setString('email', _email);
-    final id = sharedpreferences.getString('id');
+    global.profilepic = _profilepic!;
+    global.username = _username;
+    global.name = _name;
+    global.bio = _bio;
+    global.email = _email;
+    final id = global.id;
     final user =
         await FirebaseFirestore.instance.collection('users').doc(id).update({
       'username': _username,

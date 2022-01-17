@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/dmpage.dart';
 import 'package:instaclone/screens/editprofile.dart';
@@ -9,10 +10,14 @@ import 'screens/signup.dart';
 import 'screens/scrollpage.dart';
 import 'screens/searchpage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:instaclone/services/globals.dart' as global;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  List<CameraDescription> camera;
+  camera = await availableCameras();
+  global.cameras = camera;
   runApp(MyApp());
 }
 

@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/scrollpage.dart';
 import 'package:instaclone/screens/searchpage.dart';
+import 'package:instaclone/services/addposts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'profilepage.dart';
+import 'package:instaclone/services/globals.dart' as global;
 
 class HomePage extends StatefulWidget {
   static const String id = '/hp';
@@ -28,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   final _pageOptions = [
     ScrollPage(),
     SearchPage(),
+    addposts(),
     ProfilePage(),
   ];
 
@@ -43,13 +48,14 @@ class _HomePageState extends State<HomePage> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
+            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'addposts'),
             BottomNavigationBarItem(
               icon: Padding(
                 padding: EdgeInsets.fromLTRB(
                     height / 400, height / 168, height / 400, height / 168),
                 child: CircleAvatar(
                   radius: height * 0.015,
-                  backgroundImage: AssetImage(_url),
+                  backgroundImage: FileImage(File(global.profilepic)),
                 ),
               ),
               label: 'search',

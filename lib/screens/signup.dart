@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'myhome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:instaclone/services/globals.dart' as global;
 
 class SignUpPage extends StatefulWidget {
   static const String id = '/sign';
@@ -162,7 +162,7 @@ class _SignUpPageState extends State<SignUpPage> {
   handlesignup() async {
     await auth.createUserWithEmailAndPassword(
         email: _email, password: _password);
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     final User = (await auth.signInWithEmailAndPassword(
             email: _email, password: _password))
         .user;
@@ -171,21 +171,23 @@ class _SignUpPageState extends State<SignUpPage> {
         "id": User.uid,
         "username": _username,
         "email": _email,
+        "bio": "default bio",
+        "name": "testname",
         "profile_pic": 'assets/default.jpg',
         "created_at": DateTime.now().millisecondsSinceEpoch,
         "followers": 0,
         "following": 0,
         "posts": 0,
       });
-      sharedPreferences.setString("id", User.uid);
-      sharedPreferences.setString("username", _username);
-      sharedPreferences.setString("name", "test");
-      sharedPreferences.setString("bio", "test");
-      sharedPreferences.setString("email", _email);
-      sharedPreferences.setString("profile_pic", 'assets/default.jpg');
-      sharedPreferences.setInt("followers", 0);
-      sharedPreferences.setInt("following", 0);
-      sharedPreferences.setInt("posts", 0);
+      global.id = User.uid;
+      global.username = _username;
+      global.profilepic = 'assets/default.jpg';
+      global.name = "default name";
+      global.bio = "default bio";
+      global.email = _email;
+      global.posts = 0;
+      global.followers = 0;
+      global.following = 0;
       Navigator.pushNamed(context, HomePage.id);
     }
   }

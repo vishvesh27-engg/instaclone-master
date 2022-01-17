@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/editprofile.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:instaclone/services/globals.dart' as global;
+
+List<QueryDocumentSnapshot<Map<String, dynamic>>>? result;
+String? extension;
 
 class ProfilePage extends StatefulWidget {
   static const String id = '/profile';
@@ -9,30 +15,14 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _username = "", _email = "", _profilepic = "", _name = "", _bio = "";
-  int _followers = -1, _following = -1, _posts = -1;
-  @override
-  void initState() {
-    super.initState();
-    getuserinfo();
-    // TODO: implement initState
-  }
-
-  getuserinfo() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    _username = sharedPreferences.getString('username')!;
-    _name = sharedPreferences.getString('name')!;
-    _bio = sharedPreferences.getString('bio')!;
-    _email = sharedPreferences.getString('email')!;
-    _profilepic = sharedPreferences.getString('profile_pic')!;
-    _followers = sharedPreferences.getInt('followers')!;
-    _following = sharedPreferences.getInt('following')!;
-    _posts = sharedPreferences.getInt('posts')!;
-    setState(() {});
-  }
+  CollectionReference ref = FirebaseFirestore.instance
+      .collection('posts')
+      .doc(global.id)
+      .collection('userposts');
 
   @override
   Widget build(BuildContext context) {
+    print("${global.posts}");
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -42,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
           leadingWidth: 0,
           title: Row(children: [
             Text(
-              _username,
+              global.username,
               style: TextStyle(color: Colors.black),
             ),
             Icon(
@@ -62,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height / 200, height / 70, height / 400, height / 168),
                     child: CircleAvatar(
                       radius: height * 0.06,
-                      backgroundImage: AssetImage("assets/storyimage1.jpg"),
+                      backgroundImage: FileImage(File(global.profilepic)),
                     ),
                   ),
                   Column(
@@ -71,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: EdgeInsets.fromLTRB(
                             height / 20, height / 14, height / 20, 0),
                         child: Text(
-                          "$_posts",
+                          "${global.posts}",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -93,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: EdgeInsets.fromLTRB(
                             height / 30, height / 14, height / 30, 0),
                         child: Text(
-                          "$_followers",
+                          "${global.followers}",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -115,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: EdgeInsets.fromLTRB(
                             height / 20, height / 14, height / 20, 0),
                         child: Text(
-                          "$_following",
+                          "${global.following}",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -137,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(height / 80, 0, 0, 0),
                     child: Text(
-                      _name,
+                      global.name,
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -148,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(height / 80, 0, 0, 0),
                     child: Text(
-                      _bio,
+                      global.bio,
                       style: TextStyle(color: Colors.black, fontSize: 20),
                     ))),
             Container(
@@ -160,146 +150,75 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.pushNamed(context, Editprofile.id);
                     },
                     child: Text('Edit Profile'))),
+            // Container(
+            // padding: EdgeInsets.fromLTRB(
+            //     height / 300, height / 20, height / 300, 0),
+            // height: height * 0.5,
+            // width: width,
+            //     child: GridView.builder(
+            //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //           crossAxisCount: 5,
+            //           crossAxisSpacing: 5.0,
+            //           mainAxisSpacing: 5.0,
+            //         ),
+            //         itemCount: global.posts,
+            //         itemBuilder: (context, index) {
+            //           extension = result![index]["postimages"][0].substring(
+            //               result![index]["postimages"][0].length - 3);
+            //           // if (extension == "mp4") {
+            //           //   return Container();
+            //           // } else {
+            //           return Container(
+            //             height: height * 0.3,
+            //             width: width * 0.5,
+            //             child: Image(
+            //               image:
+            //                   FileImage(File(result![index]["postimages"][0])),
+            //               fit: BoxFit.fill,
+            //             ),
+            //           );
+            //         }
+            //         // },
+            //         )),
             Container(
-                padding: EdgeInsets.fromLTRB(
-                    height / 300, height / 20, height / 300, 0),
-                height: height * 0.5,
-                width: width,
-                child: GridView.count(
-                    scrollDirection: Axis.vertical,
-                    crossAxisCount: 3,
-                    mainAxisSpacing: height / 300,
-                    crossAxisSpacing: height / 300,
-                    children: [
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/storyimage1.jpg"),
-                          fit: BoxFit.fill,
+              padding: EdgeInsets.fromLTRB(
+                  height / 300, height / 20, height / 300, 0),
+              height: height * 0.5,
+              width: width,
+              child: StreamBuilder(
+                  stream: ref.snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 5.0,
+                          mainAxisSpacing: 5.0,
                         ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/storyimage2.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/storyimage3.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage4.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage5.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/storyimage6.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/storyimage7.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage1.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage2.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage3.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage4.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage5.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage6.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage7.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage8.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      Container(
-                        height: height * 0.3,
-                        width: width * 0.5,
-                        child: Image(
-                          image: AssetImage("assets/postimage9.jpg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ]))
+                        itemCount:
+                            snapshot.hasData ? snapshot.data!.docs.length : 0,
+                        itemBuilder: (context, index) {
+                          extension = snapshot
+                              .data!.docs[index]["postimages"][0]
+                              .substring(snapshot.data!
+                                      .docs[index]["postimages"][0].length -
+                                  3);
+                          // if (extension == "mp4") {
+                          //   return Container();
+                          // } else {
+                          return Container(
+                            height: height * 0.3,
+                            width: width * 0.5,
+                            child: Image(
+                              image: FileImage(File(
+                                  snapshot.data!.docs[index]["postimages"][0])),
+                              fit: BoxFit.fill,
+                            ),
+                          );
+                        }
+                        // },
+                        );
+                  }),
+            )
           ],
         ));
   }
