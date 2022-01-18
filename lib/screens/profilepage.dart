@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:instaclone/main.dart';
 import 'package:instaclone/screens/editprofile.dart';
+import 'package:instaclone/screens/myhome.dart';
 import 'package:instaclone/services/globals.dart' as global;
 
 List<QueryDocumentSnapshot<Map<String, dynamic>>>? result;
@@ -15,6 +19,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late StreamSubscription<User?> _listener;
+  @override
+  void dispose() {
+    _listener.cancel();
+    super.dispose();
+  }
+
   CollectionReference ref = FirebaseFirestore.instance
       .collection('posts')
       .doc(global.id)
@@ -40,6 +51,16 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Colors.black,
             )
           ]),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  logoutuser();
+                },
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.black,
+                ))
+          ],
         ),
         body: Column(
           children: [
@@ -221,5 +242,18 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           ],
         ));
+  }
+
+  void logoutuser() async {
+    await FirebaseAuth.instance.signOut();
+    _listener = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MyHome()));
+      } else {
+        print('User is signed in!');
+      }
+    });
   }
 }
