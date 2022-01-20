@@ -8,6 +8,7 @@ import 'package:instaclone/main.dart';
 import 'package:instaclone/screens/editprofile.dart';
 import 'package:instaclone/screens/myhome.dart';
 import 'package:instaclone/services/globals.dart' as global;
+import 'package:instaclone/widgets/videoprofile.dart';
 
 List<QueryDocumentSnapshot<Map<String, dynamic>>>? result;
 String? extension;
@@ -210,22 +211,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   stream: ref.snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     return GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 5.0,
-                          mainAxisSpacing: 5.0,
-                        ),
-                        itemCount:
-                            snapshot.hasData ? snapshot.data!.docs.length : 0,
-                        itemBuilder: (context, index) {
-                          extension = snapshot
-                              .data!.docs[index]["postimages"][0]
-                              .substring(snapshot.data!
-                                      .docs[index]["postimages"][0].length -
-                                  3);
-                          // if (extension == "mp4") {
-                          //   return Container();
-                          // } else {
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 5.0,
+                        mainAxisSpacing: 5.0,
+                      ),
+                      itemCount:
+                          snapshot.hasData ? snapshot.data!.docs.length : 0,
+                      itemBuilder: (context, index) {
+                        extension = snapshot.data!.docs[index]["postimages"][0]
+                            .substring(snapshot
+                                    .data!.docs[index]["postimages"][0].length -
+                                3);
+                        if (extension == "mp4") {
+                          return videoprofile(
+                              snapshot.data!.docs[index]["postimages"][0]);
+                        } else {
                           return Container(
                             height: height * 0.3,
                             width: width * 0.5,
@@ -236,8 +237,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           );
                         }
-                        // },
-                        );
+                      },
+                    );
                   }),
             )
           ],
@@ -249,8 +250,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _listener = FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print('User is currently signed out!');
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyHome()));
+        Navigator.pushNamedAndRemoveUntil(
+            context, MyHome.id, (Route<dynamic> route) => false);
       } else {
         print('User is signed in!');
       }

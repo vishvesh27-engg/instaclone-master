@@ -1,4 +1,5 @@
 //import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/screens/homepage.dart';
@@ -16,6 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late String _email, _password;
   final auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -187,7 +189,6 @@ class _LoginPageState extends State<LoginPage> {
         print("debug9");
         global.following = result[0]["following"];
         print("debug10");
-
         Navigator.pushNamed(context, HomePage.id);
       }
 

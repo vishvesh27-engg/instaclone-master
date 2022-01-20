@@ -64,6 +64,7 @@ class _captionpageState extends State<captionpage> {
 
     var captioncontrol = TextEditingController();
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
         automaticallyImplyLeading: false,
@@ -115,7 +116,7 @@ class _captionpageState extends State<captionpage> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: TextFormField(
               controller: captioncontrol,
-              cursorColor: Colors.blue,
+              cursorColor: Colors.white,
               //initialValue: captions[_swiperindex],
               // controller: mUsername_Controller,
               onChanged: (text) {
@@ -123,14 +124,14 @@ class _captionpageState extends State<captionpage> {
               },
 
               //onEditingComplete: (input) => mController.text,
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(color: Colors.white),
               decoration: const InputDecoration(
-                fillColor: Colors.blue,
-                focusColor: Colors.blue,
+                fillColor: Colors.white,
+                focusColor: Colors.white,
                 enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue)),
+                    borderSide: BorderSide(color: Colors.white)),
                 labelText: 'Description/your story',
-                labelStyle: TextStyle(color: Colors.blue, fontSize: 20),
+                labelStyle: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
           ),
