@@ -46,7 +46,7 @@ class _captionpageState extends State<captionpage> {
           .doc(global.id)
           .collection('userposts')
           .doc("post${global.posts + 1}")
-          .set({"caption": caption, "postimages": finalpaths});
+          .set({"caption": caption, "postimages": finalpaths, "likes": 0});
       global.posts = global.posts + 1;
       final id = global.id;
       final user = await FirebaseFirestore.instance

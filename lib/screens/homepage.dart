@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instaclone/screens/pagescroll.dart';
 import 'package:instaclone/screens/scrollpage.dart';
 import 'package:instaclone/screens/searchpage.dart';
 import 'package:instaclone/services/addposts.dart';
@@ -9,7 +11,9 @@ import 'profilepage.dart';
 import 'package:instaclone/services/globals.dart' as global;
 
 class HomePage extends StatefulWidget {
+  int? pageindex;
   static const String id = '/hp';
+  HomePage([this.pageindex = 0]);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -20,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     getprofilephoto();
+    selectedPage = (widget.pageindex == null) ? 0 : widget.pageindex!;
     // TODO: implement initState
     super.initState();
   }
@@ -30,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   final _pageOptions = [
-    ScrollPage(),
+    PageScroll(),
     SearchPage(),
     addposts(),
     ProfilePage(),

@@ -181,6 +181,8 @@ class _SignUpPageState extends State<SignUpPage> {
         "followers": 0,
         "following": 0,
         "posts": 0,
+        "following_ids": <String>[],
+        "followers_ids": <String>[],
       });
       global.id = User.uid;
       global.username = _username;

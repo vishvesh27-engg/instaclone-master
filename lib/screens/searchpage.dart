@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:instaclone/screens/profilepage.dart';
+import 'package:instaclone/services/visitprofiles.dart';
 import 'package:instaclone/widgets/videoprofile.dart';
 import 'package:instaclone/services/globals.dart' as global;
 
@@ -67,6 +68,13 @@ class datasearch extends SearchDelegate<String> {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   return ListTile(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => VisitProfiles(
+                                  snapshot.data!.docs[index]["id"])));
+                    },
                     leading: CircleAvatar(
                       backgroundImage: FileImage(
                           File(snapshot.data!.docs[index]["profile_pic"])),

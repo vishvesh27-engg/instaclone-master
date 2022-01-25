@@ -194,17 +194,17 @@ class _EditprofileState extends State<Editprofile> {
 
   saveinfo() async {
     global.profilepic = _profilepic!;
-    global.username = _username;
-    global.name = _name;
-    global.bio = _bio;
-    global.email = _email;
+    global.username = username_controller.text;
+    global.name = name_controller.text;
+    global.bio = bio_controller.text;
+    global.email = email_controller.text;
     final id = global.id;
     final user =
         await FirebaseFirestore.instance.collection('users').doc(id).update({
-      'username': _username,
-      'name': _name,
-      'bio': _bio,
-      'email': _email,
+      'username': username_controller.text,
+      'name': name_controller.text,
+      'bio': bio_controller.text,
+      'email': email_controller.text,
       'profile_pic': _profilepic
     });
   }
