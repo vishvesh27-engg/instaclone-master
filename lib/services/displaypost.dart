@@ -1,28 +1,44 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:instaclone/widgets/videocaption.dart';
 
 class DisplayPost extends StatefulWidget {
-  DisplayPost({@required this.name, this.dp, this.caption, this.postimages});
+  DisplayPost(
+      {@required this.id, this.name, this.dp, this.caption, this.postimages});
+  String? id;
   String? name;
   String? dp;
   List<dynamic>? postimages;
   String? caption;
   @override
   _DisplayPostState createState() =>
-      _DisplayPostState(name, dp, caption, postimages);
+      _DisplayPostState(id, name, dp, caption, postimages);
 }
 
 class _DisplayPostState extends State<DisplayPost> {
   _DisplayPostState(
-      @required this.name, this.dp, this.caption, this.postimages);
+      @required this.id, this.name, this.dp, this.caption, this.postimages);
   String? name;
   String? dp;
+  String? id;
   List<dynamic>? postimages;
   String? caption;
   String _myImage = "assets/heartlogo.png";
+  int? likes;
+  String? postid;
+  int cnt = 0;
+  List<QueryDocumentSnapshot<Map<String, dynamic>>>? ref;
+  @override
+  void initState() {
+    getnooflikes();
+
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -76,7 +92,31 @@ class _DisplayPostState extends State<DisplayPost> {
                 padding: EdgeInsets.fromLTRB(
                     0, aheight * 0.25, aheight * 0.1, aheight * 0.3),
                 child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      if (_myImage == "assets/heartlogo.png" &&
+                          postid != null &&
+                          likes != null) {
+                        await FirebaseFirestore.instance
+                            .collection("posts")
+                            .doc(id)
+                            .collection("userposts")
+                            .doc(postid)
+                            .update({"likes": FieldValue.increment(1)});
+                        likes = likes! + 1;
+                      } else {
+                        if (_myImage == "assets/liked.png" &&
+                            cnt > 0 &&
+                            postid != null &&
+                            likes != null) {
+                          await FirebaseFirestore.instance
+                              .collection("posts")
+                              .doc(id)
+                              .collection("userposts")
+                              .doc(postid)
+                              .update({"likes": FieldValue.increment(-1)});
+                          likes = likes! - 1;
+                        }
+                      }
                       final snackBar = SnackBar(
                         backgroundColor: Colors.white,
                         content: Text('You Have Liked This Post',
@@ -85,16 +125,24 @@ class _DisplayPostState extends State<DisplayPost> {
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       setState(() {
                         if (_myImage == "assets/heartlogo.png") {
-                          _myImage =
-                              "assets/liked.png"; //change myImage to the other one
+                          cnt++;
+                          //change myImage to the other one
+                          _myImage = "assets/liked.png";
                         } else {
                           _myImage =
                               "assets/heartlogo.png"; //change myImage back to the original one
                         }
                       });
                     },
-                    child: Image(
-                        image: AssetImage(_myImage), height: aheight * 0.4))),
+                    child: Column(children: [
+                      Image(image: AssetImage(_myImage), height: aheight * 0.4),
+                      (_myImage == "assets/liked.png" && likes != null)
+                          ? Text("$likes")
+                          : Container(
+                              height: 0,
+                              width: 0,
+                            )
+                    ]))),
             IconButton(onPressed: () {}, icon: Icon(Icons.comment)),
             Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -125,5 +173,18 @@ class _DisplayPostState extends State<DisplayPost> {
         )
       ],
     );
+  }
+
+  Future<bool> getnooflikes() async {
+    ref = (await FirebaseFirestore.instance
+            .collection("posts")
+            .doc(id)
+            .collection("userposts")
+            .where("postimages", isEqualTo: postimages)
+            .get())
+        .docs;
+    likes = ref![0]["likes"];
+    postid = ref![0].id;
+    return true;
   }
 }

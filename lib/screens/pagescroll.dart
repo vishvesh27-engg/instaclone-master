@@ -156,6 +156,7 @@ class _PageScrollState extends State<PageScroll> {
                                           if (snapshot2.hasData &&
                                               snapshot1.hasData) {
                                             return DisplayPost(
+                                                id: snapshot1.data?.get("id"),
                                                 name: snapshot1.data
                                                     ?.get("username"),
                                                 dp: snapshot1.data
