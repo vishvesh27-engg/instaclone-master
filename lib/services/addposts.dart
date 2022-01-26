@@ -288,23 +288,19 @@ class _addpostsState extends State<addposts> {
               height: size.height / 20,
               child: Row(
                 children: [
-                  Container(
-                    width: size.width / 7,
-                  ),
+                  Spacer(),
                   TextButton(
                       onPressed: () {
                         setState(() {
                           issnap = true;
                         });
                       },
-                      child: const Text('SNAP',
+                      child: const Text('PHOTO',
                           textScaleFactor: 1,
                           style: TextStyle(
                               color: Colors.white,
                               fontStyle: FontStyle.italic))),
-                  Container(
-                    width: size.width / 9,
-                  ),
+                  Spacer(),
                   TextButton(
                       onPressed: () {
                         setState(() {
@@ -312,22 +308,12 @@ class _addpostsState extends State<addposts> {
                         });
                       },
                       child: const Text(
-                        'REELS',
+                        'VIDEO',
                         textScaleFactor: 1,
                         style: TextStyle(
                             color: Colors.white, fontStyle: FontStyle.italic),
                       )),
-                  Container(
-                    width: size.width / 9,
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'LIVE',
-                        textScaleFactor: 1,
-                        style: TextStyle(
-                            color: Colors.white, fontStyle: FontStyle.italic),
-                      )),
+                  Spacer()
                 ],
               ))
         ],
