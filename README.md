@@ -1,16 +1,13 @@
 # instaclone
 
-A new Flutter project.
+A clone of the instagram app for androids 
 
 ## Getting Started
+This project creates a platform which is a clone of the instagram UI 
+It allows you to add and share posts with other users 
+It acts as a medium of communication through texts and audio video sharing 
+you can text others in realtime using this social media platform 
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+This instagram clone project is done by vishvesh warrier
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
