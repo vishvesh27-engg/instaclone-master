@@ -213,7 +213,7 @@ class _PageScrollState extends State<PageScroll> {
         .doc(global.id)
         .get();
     following = List<String>.from(result["following_ids"]);
-    stories = following;
+    stories = List.from(following);
 
     stories.insert(0, "${global.id}");
     return true;

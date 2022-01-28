@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instaclone/screens/homepage.dart';
 import 'package:instaclone/screens/profilepage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as Path;
@@ -54,142 +55,148 @@ class _EditprofileState extends State<Editprofile> {
           title: Text('Edit Profile'),
           actions: [
             IconButton(
-                onPressed: () {
-                  saveinfo();
-                  Navigator.pop(context);
+                onPressed: () async {
+                  await saveinfo();
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => HomePage(3)));
                 },
                 icon: Icon(Icons.save))
           ],
         ),
-        body: Column(children: [
-          Container(
-              height: height / 5,
-              child: Column(
-                children: [
-                  Container(
-                    height: height / 6,
-                    width: width,
-                    child: CircleAvatar(
-                      radius: height * 0.06,
-                      backgroundImage: (_profilepic == null)
-                          ? AssetImage("assets/default.jpg")
-                          : FileImage(image!) as ImageProvider,
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(children: [
+            Container(
+                height: height / 5,
+                child: Column(
+                  children: [
+                    Container(
+                      height: height / 6,
+                      width: width,
+                      child: CircleAvatar(
+                        radius: height * 0.06,
+                        backgroundImage: (_profilepic == null)
+                            ? AssetImage("assets/default.jpg")
+                            : FileImage(image!) as ImageProvider,
+                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      changephoto();
-                    },
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(0, height * 0.01, 0, 0),
-                        child: Text(
-                          'Change profile photo',
-                          style: TextStyle(color: Colors.blue),
-                        )),
-                  )
-                ],
-              )),
-          Container(
-            height: height / 8,
-            width: width,
-            child: Row(children: [
-              Container(
-                  height: height * 0.12,
-                  width: width * 0.2,
-                  padding: EdgeInsets.fromLTRB(width * 0.02, height * 0.065,
-                      width * 0.02, height * 0.01),
-                  child: Text('NAME:')),
-              Container(
-                  height: height * 0.1,
-                  width: width * 0.75,
-                  padding: EdgeInsets.fromLTRB(
-                      width * 0.02, height * 0.03, width * 0.02, height * 0.01),
-                  child: TextField(
-                    controller: name_controller,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'name'),
-                    onChanged: (value) {
-                      _name = value.trim();
-                    },
-                  )),
-            ]),
-          ),
-          Container(
-            height: height / 12,
-            width: width,
-            child: Row(children: [
-              Container(
-                  height: height * 0.12,
-                  width: width * 0.2,
-                  padding: EdgeInsets.fromLTRB(
-                      width * 0.02, height * 0.03, width * 0.02, height * 0.01),
-                  child: Text('USERNAME:')),
-              Container(
-                  height: height * 0.1,
-                  width: width * 0.75,
-                  padding:
-                      EdgeInsets.fromLTRB(width * 0.02, 0, width * 0.02, 0),
-                  child: TextField(
-                    controller: username_controller,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'username'),
-                    onChanged: (value) {
-                      _username = value.trim();
-                    },
-                  )),
-            ]),
-          ),
-          Container(
-            height: height / 12,
-            width: width,
-            child: Row(children: [
-              Container(
-                  height: height * 0.12,
-                  width: width * 0.2,
-                  padding: EdgeInsets.fromLTRB(
-                      width * 0.02, height * 0.03, width * 0.02, height * 0.01),
-                  child: Text('BIO:')),
-              Container(
-                  height: height * 0.1,
-                  width: width * 0.75,
-                  padding:
-                      EdgeInsets.fromLTRB(width * 0.02, 0, width * 0.02, 0),
-                  child: TextField(
-                    controller: bio_controller,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'bio'),
-                    onChanged: (value) {
-                      _bio = value.trim();
-                    },
-                  )),
-            ]),
-          ),
-          Container(
-            height: height / 12,
-            width: width,
-            child: Row(children: [
-              Container(
-                  height: height * 0.12,
-                  width: width * 0.2,
-                  padding: EdgeInsets.fromLTRB(
-                      width * 0.02, height * 0.03, width * 0.02, height * 0.01),
-                  child: Text('EMAIL:')),
-              Container(
-                  height: height * 0.1,
-                  width: width * 0.75,
-                  padding:
-                      EdgeInsets.fromLTRB(width * 0.02, 0, width * 0.02, 0),
-                  child: TextField(
-                    controller: email_controller,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'email'),
-                    onChanged: (value) {
-                      _email = value.trim();
-                    },
-                  )),
-            ]),
-          )
-        ]));
+                    GestureDetector(
+                      onTap: () {
+                        changephoto();
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(0, height * 0.01, 0, 0),
+                          child: Text(
+                            'Change profile photo',
+                            style: TextStyle(color: Colors.blue),
+                          )),
+                    )
+                  ],
+                )),
+            Container(
+              height: height / 8,
+              width: width,
+              child: Row(children: [
+                Container(
+                    height: height * 0.12,
+                    width: width * 0.2,
+                    padding: EdgeInsets.fromLTRB(width * 0.02, height * 0.065,
+                        width * 0.02, height * 0.01),
+                    child: Text('NAME:')),
+                Container(
+                    height: height * 0.1,
+                    width: width * 0.75,
+                    padding: EdgeInsets.fromLTRB(width * 0.02, height * 0.03,
+                        width * 0.02, height * 0.01),
+                    child: TextField(
+                      controller: name_controller,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(), hintText: 'name'),
+                      onChanged: (value) {
+                        _name = value.trim();
+                      },
+                    )),
+              ]),
+            ),
+            Container(
+              height: height / 12,
+              width: width,
+              child: Row(children: [
+                Container(
+                    height: height * 0.12,
+                    width: width * 0.2,
+                    padding: EdgeInsets.fromLTRB(width * 0.02, height * 0.03,
+                        width * 0.02, height * 0.01),
+                    child: Text('USERNAME:')),
+                Container(
+                    height: height * 0.1,
+                    width: width * 0.75,
+                    padding:
+                        EdgeInsets.fromLTRB(width * 0.02, 0, width * 0.02, 0),
+                    child: TextField(
+                      controller: username_controller,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(), hintText: 'username'),
+                      onChanged: (value) {
+                        _username = value.trim();
+                      },
+                    )),
+              ]),
+            ),
+            Container(
+              height: height / 12,
+              width: width,
+              child: Row(children: [
+                Container(
+                    height: height * 0.12,
+                    width: width * 0.2,
+                    padding: EdgeInsets.fromLTRB(width * 0.02, height * 0.03,
+                        width * 0.02, height * 0.01),
+                    child: Text('BIO:')),
+                Container(
+                    height: height * 0.1,
+                    width: width * 0.75,
+                    padding:
+                        EdgeInsets.fromLTRB(width * 0.02, 0, width * 0.02, 0),
+                    child: TextField(
+                      controller: bio_controller,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(), hintText: 'bio'),
+                      onChanged: (value) {
+                        _bio = value.trim();
+                      },
+                    )),
+              ]),
+            ),
+            Container(
+              height: height / 12,
+              width: width,
+              child: Row(children: [
+                Container(
+                    height: height * 0.12,
+                    width: width * 0.2,
+                    padding: EdgeInsets.fromLTRB(width * 0.02, height * 0.03,
+                        width * 0.02, height * 0.01),
+                    child: Text('EMAIL:')),
+                Container(
+                    height: height * 0.1,
+                    width: width * 0.75,
+                    padding:
+                        EdgeInsets.fromLTRB(width * 0.02, 0, width * 0.02, 0),
+                    child: TextField(
+                      controller: email_controller,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(), hintText: 'email'),
+                      onChanged: (value) {
+                        _email = value.trim();
+                      },
+                    )),
+              ]),
+            )
+          ]),
+        ));
   }
 
   saveinfo() async {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:instaclone/screens/chatpage.dart';
 import 'package:instaclone/screens/homepage.dart';
 import 'package:instaclone/widgets/videoprofile.dart';
 import 'package:instaclone/services/globals.dart' as global;
@@ -16,6 +17,7 @@ class VisitProfiles extends StatefulWidget {
 }
 
 class _VisitProfilesState extends State<VisitProfiles> {
+  var visitor;
   String? visitorid;
   int? posts;
   int? followers;
@@ -228,7 +230,14 @@ class _VisitProfilesState extends State<VisitProfiles> {
                         style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.white)),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (visitor != null)
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        chat_page(docs: visitor)));
+                        },
                         child: Text(
                           "message",
                           style: TextStyle(color: Colors.black),
@@ -357,7 +366,7 @@ class _VisitProfilesState extends State<VisitProfiles> {
   }
 
   void getinformationofvisitor() async {
-    var visitor = await FirebaseFirestore.instance
+    visitor = await FirebaseFirestore.instance
         .collection("users")
         .doc(visitorid)
         .get();
